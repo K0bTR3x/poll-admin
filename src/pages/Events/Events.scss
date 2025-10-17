@@ -1,0 +1,255 @@
+.events-page {
+    padding: 24px;
+    transition: background 0.3s ease, color 0.3s ease;
+    background: #f5f5f5;
+    color: #222;
+
+    .events-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .events-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        .events-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            .search-input {
+                padding: 8px 12px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                background: #fff;
+                color: #222;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+
+                &::placeholder {
+                    color: #888;
+                }
+
+                &:focus {
+                    outline: none;
+                    border-color: #00c6ff;
+                }
+            }
+
+            .create-btn {
+                background: linear-gradient(90deg, #0072ff, #00c6ff);
+                color: white;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                &:hover {
+                    opacity: 0.85;
+                }
+            }
+        }
+    }
+
+    .events-table {
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+        transition: background 0.3s ease;
+
+        .table-header,
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 14px 16px;
+            align-items: center;
+        }
+
+        .table-header {
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .table-row {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: background 0.2s ease;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.03);
+            }
+
+            .status {
+                padding: 5px 10px;
+                border-radius: 6px;
+                font-size: 0.85rem;
+                text-transform: capitalize;
+
+                &.active {
+                    background: rgba(0, 200, 0, 0.2);
+                    color: #00c800;
+                }
+
+                &.upcoming {
+                    background: rgba(0, 150, 255, 0.2);
+                    color: #0096ff;
+                }
+
+                &.finished {
+                    background: rgba(200, 0, 0, 0.2);
+                    color: #ff4444;
+                }
+            }
+
+            .actions {
+                display: flex;
+                gap: 10px;
+                justify-content: flex-start;
+
+                button {
+                    background: transparent;
+                    border: none;
+                    color: inherit;
+                    cursor: pointer;
+                    font-size: 1.2rem;
+                    transition: color 0.2s ease;
+
+                    &:hover {
+                        color: #00c6ff;
+                    }
+                }
+            }
+        }
+
+        .no-data {
+            padding: 20px;
+            text-align: center;
+            color: gray;
+        }
+    }
+
+    // ---------------------
+    // Pagination
+    // ---------------------
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 8px;
+
+        button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            background: #f0f0f0;
+            color: #222;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &.active {
+                background: #00c6ff;
+                color: #fff;
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            &:hover:not(:disabled):not(.active) {
+                background: #ddd;
+            }
+        }
+    }
+}
+
+// ---------------------
+// Dark Mode Overrides
+// ---------------------
+.dark .events-page {
+    background: #1a1a1a;
+    color: #eee;
+
+    .events-header {
+        .search-input {
+            background: #333;
+            border-color: #555;
+            color: #eee;
+
+            &::placeholder {
+                color: #bbb;
+            }
+        }
+
+        .create-btn {
+            background: linear-gradient(90deg, #0055aa, #00aaff);
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+
+    .events-table {
+        background: #242424;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+
+        .table-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-row {
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .status.active {
+                background: rgba(0, 200, 0, 0.3);
+                color: #00ff00;
+            }
+
+            .status.upcoming {
+                background: rgba(0, 150, 255, 0.3);
+                color: #00cfff;
+            }
+
+            .status.finished {
+                background: rgba(255, 0, 0, 0.3);
+                color: #ff6666;
+            }
+
+            .actions button:hover {
+                color: #00cfff;
+            }
+        }
+
+        .no-data {
+            color: #bbb;
+        }
+    }
+
+    .pagination {
+        button {
+            background: #333;
+            color: #eee;
+
+            &.active {
+                background: #00c6ff;
+                color: #fff;
+            }
+
+            &:hover:not(:disabled):not(.active) {
+                background: #444;
+            }
+        }
+    }
+}

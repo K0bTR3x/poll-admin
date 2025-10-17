@@ -1,6 +1,4 @@
 import "./Dashboard.scss";
-import Sidebar from "../../layout/sidebar/Sidebar";
-import Header from "../../layout/header/Header";
 const Dashboard = () => {
     return (
         <>
