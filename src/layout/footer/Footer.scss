@@ -1,7 +1,41 @@
-.footer{
+/* Footer.scss */
+.app-footer {
     text-align: center;
-    padding: 1rem 0;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    font-size: 0.9rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    transition: all 0.3s;
+    background: var(--color-footer-bg);
+    color: var(--color-text);
+
+    p {
+        margin: 0;
+    }
+
+    &.light {
+        background: var(--color-footer-bg);
+
+        /* Light mode rəngləri artıq style-dan gəlir, burda hover istifadə edilə bilər */
+        a {
+            color: #fff;
+
+            &:hover {
+                color: var(--color-primary-hover);
+            }
+        }
+    }
+
+    &.dark {
+
+        /* Dark mode rəngləri style-dan gəlir */
+        a {
+            color: var(--color-text);
+
+            &:hover {
+                color: var(--color-primary-hover);
+            }
+        }
+    }
 }

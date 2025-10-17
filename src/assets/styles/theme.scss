@@ -1,0 +1,68 @@
+:root {
+    /* Light mode */
+    --color-primary: #142850;
+    /* tünd göy */
+    --color-primary-hover: #18588f;
+    /* hover açıq mavi */
+
+    --color-secondary: #DAE1E7;
+    /* secondary açıq mavi */
+    --color-secondary-hover: #3da5d9;
+    /* secondary hover açıq */
+
+    --color-header-bg: #142850;
+    /* header əsas */
+    --color-header-bg-hover: #18588f;
+
+    --color-footer-bg: #142850;
+    /* footer əsas */
+    --color-footer-bg-hover: #18588f;
+
+    --color-card-bg: #27496D;
+    /* açıq kartlar */
+    --color-background: #f5f7fa;
+    /* əsas page background */
+
+    --color-text: #ffffff;
+    /* header/footer üstündə text ağ */
+    --color-text-dark: #1a1a1a;
+    /* card/text əsas page üçün tünd text */
+    --color-text-active: #ffffff;
+    /* aktiv link/text */
+    --color-muted: rgba(0, 0, 0, 0.45);
+    /* muted text */
+    --color-border: #757575;
+    /* border color */
+}
+
+body.dark {
+    /* Dark mode */
+    --color-primary: #0d3b66;
+    /* tünd göy əsas */
+    --color-primary-hover: #187bcd;
+
+    --color-secondary: #066c91;
+    /* secondary tünd mavi */
+    --color-secondary-hover: #0694ff;
+
+    --color-header-bg: #0d3b66;
+    /* dark header */
+    --color-header-bg-hover: #187bcd;
+
+    --color-footer-bg: #0d3b66;
+    /* dark footer */
+    --color-footer-bg-hover: #187bcd;
+
+    --color-card-bg: #1e1e2f;
+    /* dark card */
+    --color-background: #121212;
+    /* dark background */
+
+    --color-text: #ffffff;
+    /* əsas text white */
+    --color-text-dark: #e0e0e0;
+    /* card/text üçün aydın text */
+    --color-text-active: #69a6d2;
+    /* aktiv link/text */
+    --color-muted: rgba(255, 255, 255, 0.6);
+}

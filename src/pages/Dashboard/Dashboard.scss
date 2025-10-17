@@ -1,98 +1,56 @@
-/* --- Dashboard Layout --- */
-.dashboard {
-    width: 100%;
-    background: var(--bg-main);
-    color: var(--text-main);
-    font-family: "Poppins", sans-serif;
-}
-/* Main content */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.dashboard-page {
+    padding: 20px;
 
-    .stats-section {
-        display: flex;
-        gap: 20px;
-        padding: 30px;
+    .stats-cards {
+        .ant-card {
+            transition: all 0.3s;
+            background: var(--color-card-bg);
+            color: var(--color-text);
 
-        .stat-card {
-            flex: 1;
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
-
-            &:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 20px rgba(50, 115, 245, 0.4);
+            .ant-statistic-title {
+                color: var(--color-text);
             }
 
-            h3 {
-                font-size: 16px;
-                margin-bottom: 10px;
-                opacity: 0.8;
-            }
-
-            p {
-                font-size: 24px;
-                font-weight: 700;
+            .ant-statistic-content {
+                color: var(--color-text);
             }
         }
     }
 
-    .chart-section {
-        flex: 1;
-        padding: 0 30px 30px 30px;
+    .events-table {
+        .ant-table {
+            background: var(--color-card-bg);
 
-        .chart-placeholder {
-            width: 100%;
-            height: 300px;
-            background: var(--bg-card);
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 18px;
-        }
-    }
-}
+            .ant-table-thead>tr>th {
+                background: var(--color-card-bg);
+                color: var(--color-text);
+            }
 
-/* --- Responsive --- */
-@media (max-width: 900px) {
-    .dashboard {
-        flex-direction: column;
-    }
+            .ant-table-tbody>tr>td {
+                color: var(--color-text-dark);
+                background: var(--color-secondary);
+            }
 
-    .sidebar {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 10px 0;
-        border-right: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-        .sidebar-logo {
-            display: none;
-        }
-
-        .sidebar-menu {
-            display: flex;
-            gap: 15px;
-
-            li {
-                margin-bottom: 0;
-                text-align: center;
+            .ant-table-tbody>tr:hover>td {
+                background: var(--color-primary-hover);
             }
         }
     }
 
-    .stats-section,
-    .chart-section {
-        flex-direction: column;
-        padding: 20px;
+    &.dark {
+        .ant-card {
+            background: var(--color-primary);
+            color: var(--color-text);
+        }
+
+        .ant-table-thead>tr>th {
+            background: var(--color-header-bg);
+            color: var(--color-text);
+        }
+
+        .ant-table-tbody>tr>td {
+            background: var(--color-secondary) !important;
+            color: var(--color-text);
+        }
     }
 }

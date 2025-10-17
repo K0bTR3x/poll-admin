@@ -15,86 +15,44 @@
   ],
   "events": [
     {
-      "id": "1",
-      "title": "React Workshop",
-      "date": "2025-10-20",
-      "time": "13:00 - 15:00",
-      "status": "upcoming",
-      "participants": 15,
-      "questions": [
-        {
-          "question": "React Hooks-dan istifadə etmisiniz?",
-          "type": "radio",
-          "options": [
-            "Bəli",
-            "Xeyr"
-          ]
-        },
-        {
-          "question": "Hansı state management-ləri bilirsiniz?",
-          "type": "multichoice",
-          "options": [
-            "Redux",
-            "MobX",
-            "Zustand",
-            "Context API"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "title": "Frontend Bootcamp",
-      "date": "2025-10-25",
-      "time": "10:00 - 16:00",
-      "status": "active",
-      "participants": 30,
-      "questions": [
-        {
-          "question": "CSS Frameworklərdən hansını istifadə edirsiniz?",
-          "type": "multichoice",
-          "options": [
-            "Bootstrap",
-            "Tailwind",
-            "Material UI",
-            "Sass"
-          ]
-        },
-        {
-          "question": "JavaScript ES6+ xüsusiyyətlərini bilirsiniz?",
-          "type": "radio",
-          "options": [
-            "Bəli",
-            "Xeyr"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "343f",
-      "title": "Qui vitae aperiam qu",
-      "description": "Ex nisi cum rerum mo",
-      "date": "2000-11-01",
-      "startTime": "05:40",
-      "endTime": "19:12",
-      "status": "upcoming",
-      "questions": []
-    },
-    {
-      "id": "75a1",
       "title": "Rerum ut blanditiis ",
-      "description": "Expedita fugiat sit",
       "date": "1971-12-15",
       "startTime": "00:23",
       "endTime": "05:34",
-      "status": "upcoming",
-      "questions": [
-        {
-          "text": "Sed qui est sint qu",
-          "type": "textarea",
-          "options": []
-        }
-      ]
+      "status": "finished",
+      "id": "75a1"
+    },
+    {
+      "title": "Aut magni vel volupt",
+      "date": "2025-10-01",
+      "startTime": "00:00",
+      "endTime": "02:00",
+      "status": "active",
+      "id": "d889"
+    },
+    {
+      "id": "462b",
+      "title": "Obcaecati dolor cons",
+      "date": "2025-10-24",
+      "startTime": "00:00",
+      "endTime": "06:10",
+      "status": "upcoming"
+    },
+    {
+      "title": "Rashad Event",
+      "date": "2025-10-18",
+      "startTime": "04:00",
+      "endTime": "07:00",
+      "status": "active",
+      "id": "7ca8"
+    },
+    {
+      "title": "Nicat",
+      "date": "2037-03-29",
+      "startTime": "01:00",
+      "endTime": "02:00",
+      "status": "active",
+      "id": "6b96"
     }
   ]
 }

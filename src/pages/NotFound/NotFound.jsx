@@ -1,6 +1,6 @@
 import React from 'react'
-import './Error.scss'
-const Error = () => {
+import './NotFound.scss'
+const NotFound = () => {
     return (
         <div>
             Error page
@@ -8,4 +8,4 @@ const Error = () => {
     )
 }
 
-export default Error
+export default NotFound

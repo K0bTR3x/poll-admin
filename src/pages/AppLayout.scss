@@ -1,0 +1,11 @@
+.app-layout {
+    &.dark {
+        --bg-main: #1e1e2f;
+        --text-main: #fff;
+    }
+    &.light {
+        --bg-main: #fff;
+        --text-main: #000;
+    }
+    
+}

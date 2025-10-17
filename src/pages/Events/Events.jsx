@@ -1,55 +1,36 @@
+// Events.jsx
 import React, { useState, useEffect } from "react";
+import { Table, Input, Button, Space, Tag } from "antd";
 import { FiEdit, FiTrash2, FiEye, FiPlus } from "react-icons/fi";
-import Swal from "sweetalert2";
-import "./Events.scss";
-import { Link } from "react-router-dom";
-import axios from "axios";
 import { BsQuestionSquare } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./Events.scss";
 
 const Events = () => {
   const [events, setEvents] = useState([]);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const eventsPerPage = 5;
-
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(`${API_URL}/events`);
         setEvents(res.data);
+        setFilteredData(res.data);
         setLoading(false);
       } catch (err) {
-        setError("Tədbirləri yükləmək mümkün olmadı!");
+        toast.error("Tədbirləri yükləmək mümkün olmadı!");
         setLoading(false);
       }
     };
     fetchEvents();
   }, [API_URL]);
-
-  const filteredEvents = events.filter((e) =>
-    e.title?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-  const currentEvents = filteredEvents.slice(
-    (currentPage - 1) * eventsPerPage,
-    currentPage * eventsPerPage
-  );
-
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
 
   const handleDelete = (id) => {
     const event = events.find((e) => e.id === id);
@@ -66,7 +47,9 @@ const Events = () => {
       if (result.isConfirmed) {
         try {
           await axios.delete(`${API_URL}/events/${id}`);
-          setEvents(events.filter((e) => e.id !== id));
+          const newData = events.filter((e) => e.id !== id);
+          setEvents(newData);
+          setFilteredData(newData);
           Swal.fire("Silindi!", `"${event.title}" silindi.`, "success");
         } catch (err) {
           Swal.fire("Xəta!", "Silmə zamanı problem baş verdi.", "error");
@@ -75,101 +58,89 @@ const Events = () => {
     });
   };
 
-  if (loading) {
-    return <div className="loading">Yüklənir...</div>;
-  }
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    const filtered = events.filter((event) =>
+      event.title.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
 
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
+  const columns = [
+    {
+      title: "Adı",
+      dataIndex: "title",
+      key: "title",
+      sorter: (a, b) => a.title.localeCompare(b.title),
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Tarix",
+      dataIndex: "date",
+      key: "date",
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+      render: (date) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      filters: [
+        { text: "active", value: "active" },
+        { text: "upcoming", value: "upcoming" },
+        { text: "finished", value: "finished" },
+        { text: "paused", value: "paused" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (status) => {
+        let color = status === "active" ? "green" : "volcano";
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
+    },
+    {
+      title: "Əməliyyatlar",
+      key: "actions",
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type="default" icon={<FiEye />} onClick={() => navigate(`/events/${record.id}`)} />
+          <Button type="primary" icon={<FiEdit />} onClick={() => navigate(`/events/edit/${record.id}`)} />
+          <Button
+            type="danger"
+            icon={<FiTrash2 />}
+            onClick={() => handleDelete(record.id)}
+          />
+          <Button type="default" icon={<BsQuestionSquare />} />
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <div className="events-page">
-      <div className="events-header">
-        <h2 className="events-title">Tədbirlər</h2>
-        <div className="events-actions">
-          <input
-            type="text"
-            placeholder="Axtar..."
-            value={search}
-            onChange={handleSearchChange}
-            className="search-input"
-          />
-          <Link to="/events/create" className="create-btn">
-            <FiPlus /> Yeni Tədbir
-          </Link>
-        </div>
+      <Toaster position="top-right" />
+      <div className="events-header" style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Axtar..."
+          value={searchText}
+          onChange={handleSearch}
+          style={{ width: 200, marginRight: 16 }}
+        />
+        <Link to="/events/create">
+          <Button type="primary" icon={<FiPlus />}>
+            Yeni Tədbir
+          </Button>
+        </Link>
       </div>
 
-      <div className="events-table">
-        <div className="table-header">
-          <div>Adı</div>
-          <div>Tarix</div>
-          <div>Status</div>
-          <div>Əməliyyatlar</div>
-        </div>
-
-        {currentEvents.length > 0 ? (
-          currentEvents.map((event) => (
-            <div className="table-row" key={event.id}>
-              <div>{event.title}</div>
-              <div>{new Date(event.date).toLocaleDateString()}</div>
-              <div>
-                <span className={`status ${event.status}`}>
-                  {event.status}
-                </span>
-              </div>
-              <div className="actions">
-                <button className="view">
-                  <FiEye />
-                </button>
-                <button className="edit">
-                  <FiEdit />
-                </button>
-                <button
-                  className="delete"
-                  onClick={() => handleDelete(event.id)}
-                >
-                  <FiTrash2 />
-                </button>
-                <button
-                  className="questions"
-                >
-                  <BsQuestionSquare />
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-data">Heç bir tədbir tapılmadı.</div>
-        )}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            {"<"}
-          </button>
-          {[...Array(totalPages)].map((_, idx) => (
-            <button
-              key={idx + 1}
-              className={currentPage === idx + 1 ? "active" : ""}
-              onClick={() => handlePageChange(idx + 1)}
-            >
-              {idx + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            {">"}
-          </button>
-        </div>
-      )}
+      <Table
+        columns={columns}
+        dataSource={filteredData}
+        loading={loading}
+        rowKey="id"
+        pagination={{ pageSize: 5 }}
+        scroll={{ x: "max-content" }}
+      />
     </div>
   );
 };
