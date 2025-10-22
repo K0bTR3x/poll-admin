@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.scss";
 import logo from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
@@ -6,43 +6,33 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import toast, { Toaster } from "react-hot-toast";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-import axios from "axios";
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../store/slices/authSlice/AuthSlice";
 
 const Login = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const { token, loading } = useSelector((state) => state.auth);
 
-    const initialValues = {
-        username: "",
-        password: "",
-    };
+    useEffect(() => {
+        if (token) navigate("/dashboard");
+    }, [token, navigate]);
 
     const validationSchema = Yup.object({
-        username: Yup.string().required("İstifadəçi adı tələb olunur"),
+        email: Yup.string()
+            .email("Düzgün e-poçt ünvanı daxil edin")
+            .required("E-poçt tələb olunur"),
         password: Yup.string().required("Şifrə tələb olunur"),
     });
 
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
-            console.log("API_URL:", API_URL);
-            const res = await axios.get(`${API_URL}/users?username=${values.username}`);
-            const user = res.data[0];
-
-            if (!user) {
-                toast.error("İstifadəçi tapılmadı");
-                return;
-            }
-
-            if (user.password !== values.password) {
-                toast.error("Şifrə yanlışdır");
-                return;
-            }
+            await dispatch(loginUser(values)).unwrap();
+            toast.success("Daxil olundu");
             navigate("/dashboard");
         } catch (err) {
-            console.error(err);
-            toast.error("Xəta baş verdi, yenidən cəhd edin");
+            toast.error("E-poçt və ya şifrə yanlışdır");
         } finally {
             setSubmitting(false);
         }
@@ -50,27 +40,23 @@ const Login = () => {
 
     return (
         <div className="login-page">
-            <Toaster position="top-right" reverseOrder={false} />
+            <Toaster position="top-right" />
             <div className="login-box">
                 <div className="login-form-side">
                     <div className="login-card">
-                        <h2>Xoş Gəlmisiniz !</h2>
-                        <p>Şəxsi Məlumatlarınızı daxil edin</p>
+                        <h2>Xoş Gəlmisiniz!</h2>
+                        <p>Şəxsi məlumatlarınızı daxil edin</p>
 
                         <Formik
-                            initialValues={initialValues}
+                            initialValues={{ email: "", password: "" }}
                             validationSchema={validationSchema}
                             onSubmit={handleSubmit}
                         >
                             {({ isSubmitting }) => (
                                 <Form>
-                                    <Field
-                                        type="text"
-                                        name="username"
-                                        placeholder="İstifadəçi adı"
-                                    />
+                                    <Field type="email" name="email" placeholder="E-poçt" />
                                     <ErrorMessage
-                                        name="username"
+                                        name="email"
                                         component="div"
                                         className="formik-error red-error"
                                     />
@@ -94,16 +80,12 @@ const Login = () => {
                                         className="formik-error red-error"
                                     />
 
-                                    <button type="submit" disabled={isSubmitting}>
-                                        {isSubmitting ? "Daxil olunur..." : "Daxil Ol"}
+                                    <button type="submit" disabled={isSubmitting || loading}>
+                                        {isSubmitting || loading ? "Daxil olunur..." : "Daxil ol"}
                                     </button>
                                 </Form>
                             )}
                         </Formik>
-
-                        <a href="#" className="forgot">
-                            Şifrəni unutmusunuz?
-                        </a>
                     </div>
                 </div>
 

@@ -1,68 +1,68 @@
 :root {
     /* Light mode */
-    --color-primary: #142850;
-    /* tünd göy */
-    --color-primary-hover: #18588f;
-    /* hover açıq mavi */
+    --color-primary: #1b3b6f;
+    /* dərin, sakit navy */
+    --color-primary-hover: #2f5d8a;
+    /* daha açıq, mavi ton */
 
-    --color-secondary: #DAE1E7;
-    /* secondary açıq mavi */
-    --color-secondary-hover: #3da5d9;
-    /* secondary hover açıq */
+    --color-secondary: #e5ecf4;
+    /* çox yumşaq boz-mavi fon */
+    --color-secondary-hover: #c3d6ed;
+    /* hover zamanı azacıq doymuş */
 
-    --color-header-bg: #142850;
-    /* header əsas */
-    --color-header-bg-hover: #18588f;
+    --color-header-bg: #1b3b6f;
+    /* başlıq üçün əsas rəng */
+    --color-header-bg-hover: #2f5d8a;
 
-    --color-footer-bg: #142850;
-    /* footer əsas */
-    --color-footer-bg-hover: #18588f;
+    --color-footer-bg: #1b3b6f;
+    --color-footer-bg-hover: #2f5d8a;
 
-    --color-card-bg: #27496D;
-    /* açıq kartlar */
-    --color-background: #f5f7fa;
-    /* əsas page background */
+    --color-card-bg: #ffffff;
+    /* açıq kartlar üçün ağ (çünki artıq əsas fon boz-mavidir) */
+    --color-background: #f2f5f9;
+    /* əsas səhifə fonu - yumşaq boz-mavi */
 
-    --color-text: #ffffff;
-    /* header/footer üstündə text ağ */
-    --color-text-dark: #1a1a1a;
-    /* card/text əsas page üçün tünd text */
+    --color-text: #f8f8f8;
+    /* header/footer text - çox açıq, tam ağ deyil */
+    --color-text-dark: #212121;
+    /* kontent üçün tünd text */
     --color-text-active: #ffffff;
-    /* aktiv link/text */
-    --color-muted: rgba(0, 0, 0, 0.45);
-    /* muted text */
-    --color-border: #757575;
-    /* border color */
+    /* aktiv linklər üçün ağ */
+    --color-muted: rgba(0, 0, 0, 0.55);
+    /* bir az daha oxunaqlı muted */
+    --color-border: #b0b8c4;
+    /* sərt deyil, soft grey border */
 }
 
 body.dark {
     /* Dark mode */
-    --color-primary: #0d3b66;
-    /* tünd göy əsas */
-    --color-primary-hover: #187bcd;
+    --color-primary: #13325c;
+    /* navy blue base */
+    --color-primary-hover: #2f6eaa;
+    /* hover üçün canlı mavi */
 
-    --color-secondary: #066c91;
-    /* secondary tünd mavi */
-    --color-secondary-hover: #0694ff;
+    --color-secondary: #1f2d3d;
+    /* soft dark background */
+    --color-secondary-hover: #2b3b52;
 
-    --color-header-bg: #0d3b66;
-    /* dark header */
-    --color-header-bg-hover: #187bcd;
+    --color-header-bg: #162c46;
+    --color-header-bg-hover: #23496d;
 
-    --color-footer-bg: #0d3b66;
-    /* dark footer */
-    --color-footer-bg-hover: #187bcd;
+    --color-footer-bg: #162c46;
+    --color-footer-bg-hover: #23496d;
 
-    --color-card-bg: #1e1e2f;
-    /* dark card */
-    --color-background: #121212;
-    /* dark background */
+    --color-card-bg: #1d2838;
+    /* kartlar üçün yüngül fərqli fon */
+    --color-background: #121a24;
+    /* əsas dark background */
 
-    --color-text: #ffffff;
-    /* əsas text white */
-    --color-text-dark: #e0e0e0;
-    /* card/text üçün aydın text */
-    --color-text-active: #69a6d2;
-    /* aktiv link/text */
-    --color-muted: rgba(255, 255, 255, 0.6);
+    --color-text: #f0f0f0;
+    /* ümumi text üçün ağ ton */
+    --color-text-dark: #d1d9e0;
+    /* kart textlər üçün yumşaq ağ */
+    --color-text-active: #6fb7ff;
+    /* aktiv elementlər üçün soft blue highlight */
+    --color-muted: rgba(255, 255, 255, 0.65);
+    --color-border: #3e4a5a;
+    /* sərtlik azaldılmış border */
 }

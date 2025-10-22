@@ -1,70 +1,161 @@
-// Events.jsx
-import React, { useState, useEffect } from "react";
-import { Table, Input, Button, Space, Tag } from "antd";
-import { FiEdit, FiTrash2, FiEye, FiPlus } from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
+import { Table, Input, Button, Space, Tag, Select, Row, Col } from "antd";
+import {
+  FiEdit,
+  FiTrash2,
+  FiEye,
+  FiPlus,
+  FiSearch,
+  FiFilter,
+} from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 import "./Events.scss";
+
+const { Option } = Select;
 
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [meta, setMeta] = useState(null);
+  const [sortableList, setsortableList] = useState([]);
+  const [sortableFields, setSortableFields] = useState({
+    sort: "id",
+    sort_type: "asc",
+  });
+  const [setupFilters, setSetupFilters] = useState([]);
+  const [perPage, setPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-  const API_URL = process.env.REACT_APP_API_URL;
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/events`);
-        setEvents(res.data);
-        setFilteredData(res.data);
-        setLoading(false);
-      } catch (err) {
-        toast.error("Tədbirləri yükləmək mümkün olmadı!");
-        setLoading(false);
-      }
-    };
-    fetchEvents();
-  }, [API_URL]);
 
-  const handleDelete = (id) => {
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(
+        `/meetings?page=${currentPage}&perPage=${perPage}&sort=${sortableFields.sort}&sort_type=${sortableFields.sort_type}`
+      );
+      const { data, meta, sortable, filters } = res.data;
+      setEvents(data);
+      setMeta(meta);
+      setsortableList(sortable || []);
+      setSetupFilters(filters || []);
+    } catch (err) {
+      console.error("Tədbirlər yüklənmədi:", err);
+      if (err.response?.status === 401) {
+        toast.error("Sessiya başa çatdı. Yenidən daxil olun.");
+        navigate("/");
+      } else {
+        toast.error("Tədbirləri yükləmək mümkün olmadı!");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, [currentPage, perPage, sortableFields]);
+
+  // ✅ Tədbir silmək
+  const handleDelete = async (id) => {
     const event = events.find((e) => e.id === id);
-    Swal.fire({
+    const confirm = await Swal.fire({
       title: "Silinsin?",
-      text: `"${event.title}" tədbirini silmək istədiyinizə əminsiniz?`,
+      text: `"${event?.title}" tədbirini silmək istədiyinizə əminsiniz?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Bəli, sil!",
       cancelButtonText: "Ləğv et",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.delete(`${API_URL}/events/${id}`);
-          const newData = events.filter((e) => e.id !== id);
-          setEvents(newData);
-          setFilteredData(newData);
-          Swal.fire("Silindi!", `"${event.title}" silindi.`, "success");
-        } catch (err) {
-          Swal.fire("Xəta!", "Silmə zamanı problem baş verdi.", "error");
-        }
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        await api.delete(`/meetings/${id}`);
+        setEvents((prev) => prev.filter((e) => e.id !== id));
+        toast.success(`"${event?.title}" silindi.`);
+        setCurrentPage(1);
+      } catch (err) {
+        console.error(err);
+        toast.error("Silmə zamanı xəta baş verdi!");
       }
+    }
+  };
+
+  const getColumnSearchProps = (dataIndex, title) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`${title} üzrə axtar...`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<FiSearch />}
+            size="small"
+          >
+            Axtar
+          </Button>
+          <Button onClick={() => handleReset(clearFilters)} size="small">
+            Təmizlə
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <FiFilter
+        style={{ color: filtered ? "var(--color-primary)" : undefined }}
+      />
+    ),
+    filterDropdownProps: {
+      onOpenChange: (open) => {
+        if (open) setTimeout(() => searchInput.current?.select(), 100);
+      },
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <span style={{ backgroundColor: "#ffc069", padding: 2 }}>{text}</span>
+      ) : (
+        text
+      ),
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setSortableFields({
+      sort: sorter.field || "id",
+      sort_type:
+        sorter.order === "ascend"
+          ? "asc"
+          : sorter.order === "descend"
+            ? "desc"
+            : "asc",
     });
   };
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-    const filtered = events.filter((event) =>
-      event.title.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredData(filtered);
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
   };
 
   const columns = [
@@ -72,30 +163,60 @@ const Events = () => {
       title: "Adı",
       dataIndex: "title",
       key: "title",
-      sorter: (a, b) => a.title.localeCompare(b.title),
-      render: (text) => <span>{text}</span>,
+      sorter: sortableList.includes("title")
+        ? (a, b) => a.title.localeCompare(b.title)
+        : false,
+      ...(setupFilters.includes("title")
+        ? getColumnSearchProps("title", "Adı")
+        : {}),
     },
     {
-      title: "Tarix",
-      dataIndex: "date",
-      key: "date",
-      sorter: (a, b) => new Date(a.date) - new Date(b.date),
-      render: (date) => new Date(date).toLocaleDateString(),
+      title: "Başlama vaxtı",
+      dataIndex: "start_time",
+      key: "start_time",
+      sorter: sortableList.includes("created_at")
+        ? (a, b) => new Date(a.start_time) - new Date(b.start_time)
+        : false,
+    },
+    {
+      title: "Bitmə vaxtı",
+      dataIndex: "end_time",
+      key: "end_time",
+      sorter: sortableList.includes("created_at")
+        ? (a, b) => new Date(a.end_time) - new Date(b.end_time)
+        : false,
+    },
+    {
+      title: "Max istifadəçi sayı",
+      dataIndex: "max_user_count",
+      key: "max_user_count",
+      sorter: sortableList.includes("max_user_count")
+        ? (a, b) => a.max_user_count - b.max_user_count
+        : false,
+      ...(setupFilters.includes("max_user_count")
+        ? getColumnSearchProps("max_user_count", "Max istifadəçi sayı")
+        : {}),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      filters: [
-        { text: "active", value: "active" },
-        { text: "upcoming", value: "upcoming" },
-        { text: "finished", value: "finished" },
-        { text: "paused", value: "paused" },
-      ],
-      onFilter: (value, record) => record.status === value,
+      ...(setupFilters.includes("status")
+        ? {
+          filters: [
+            { text: "Gözləmədə", value: 1 },
+            { text: "Aktiv", value: 2 },
+            { text: "Bitib", value: 3 },
+          ],
+          onFilter: (value, record) => record.status === value,
+        }
+        : {}),
       render: (status) => {
-        let color = status === "active" ? "green" : "volcano";
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+        let color =
+          status === 1 ? "orange" : status === 2 ? "green" : "volcano";
+        let text =
+          status === 1 ? "Gözləmədə" : status === 2 ? "Aktiv" : "Bitib";
+        return <Tag color={color}>{text}</Tag>;
       },
     },
     {
@@ -103,42 +224,82 @@ const Events = () => {
       key: "actions",
       render: (_, record) => (
         <Space size="middle">
-          <Button type="default" icon={<FiEye />} onClick={() => navigate(`/events/${record.id}`)} />
-          <Button type="primary" icon={<FiEdit />} onClick={() => navigate(`/events/edit/${record.id}`)} />
           <Button
-            type="danger"
+            type="default"
+            icon={<FiEye />}
+            onClick={() => navigate(`/events/${record.id}`)}
+          />
+          <Button
+            type="primary"
+            icon={<FiEdit />}
+            onClick={() => navigate(`/events/edit/${record.id}`)}
+          />
+          <Button
+            danger
             icon={<FiTrash2 />}
             onClick={() => handleDelete(record.id)}
           />
-          <Button type="default" icon={<BsQuestionSquare />} />
+          {/* 🔹 Yeni: Suallara keçid düyməsi */}
+          <Button
+            type="default"
+            icon={<BsQuestionSquare />}
+            onClick={() => navigate(`/events/${record.id}/questions`)}
+          />
         </Space>
       ),
     },
   ];
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="events-page">
       <Toaster position="top-right" />
-      <div className="events-header" style={{ marginBottom: 16 }}>
-        <Input
-          placeholder="Axtar..."
-          value={searchText}
-          onChange={handleSearch}
-          style={{ width: 200, marginRight: 16 }}
-        />
-        <Link to="/events/create">
-          <Button type="primary" icon={<FiPlus />}>
-            Yeni Tədbir
-          </Button>
-        </Link>
+      <div className="events-header">
+        <Row gutter={[16, 16]} align="middle" justify="space-between">
+          <Col>
+            <span className="breadcrumb">İdarəetmə Paneli / Tədbirlər</span>
+          </Col>
+
+          <Col>
+            <Space>
+              <Select
+                defaultValue={perPage}
+                style={{ width: 120 }}
+                onChange={(value) => setPerPage(value)}
+              >
+                {[5, 10, 15, 20, 30, 50].map((size) => (
+                  <Option key={size} value={size}>
+                    {size} / səhifə
+                  </Option>
+                ))}
+              </Select>
+
+              <Link to="/events/create">
+                <Button type="primary" icon={<FiPlus />}>
+                  Yeni Tədbir
+                </Button>
+              </Link>
+            </Space>
+          </Col>
+        </Row>
       </div>
 
       <Table
         columns={columns}
-        dataSource={filteredData}
+        dataSource={events}
         loading={loading}
+        onChange={handleTableChange}
         rowKey="id"
-        pagination={{ pageSize: 5 }}
+        pagination={{
+          current: meta?.current_page || currentPage,
+          total: meta?.total || 0,
+          pageSize: perPage,
+          onChange: handlePageChange,
+          showSizeChanger: false,
+        }}
         scroll={{ x: "max-content" }}
       />
     </div>

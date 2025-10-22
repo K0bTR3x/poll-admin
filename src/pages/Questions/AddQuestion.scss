@@ -1,0 +1,21 @@
+.add-question-page {
+    padding: 24px;
+}
+
+.add-question-card {
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .ant-input,
+    .ant-select {
+        border-radius: 8px;
+    }
+}

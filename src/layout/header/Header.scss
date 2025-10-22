@@ -10,20 +10,29 @@
         align-items: center;
         height: 64px;
 
+        /* LOGO */
         .logo {
             text-decoration: none;
-            color: white;
+            color: var(--color-text);
             display: flex;
             align-items: center;
             gap: 10px;
             font-weight: bold;
             font-size: 20px;
 
+            img {
+                width: 38px;
+                height: 38px;
+                border-radius: 8px;
+                background: var(--color-card-bg);
+            }
+
             &:hover {
                 color: var(--color-primary-hover);
             }
         }
 
+        /* DESKTOP NAVIGATION */
         .desktop-nav {
             display: flex;
             align-items: center;
@@ -35,6 +44,8 @@
                 gap: 5px;
                 color: var(--color-text);
                 text-decoration: none;
+                font-weight: 500;
+                transition: color 0.2s ease;
 
                 &.active {
                     color: var(--color-text-active);
@@ -46,6 +57,25 @@
                 }
             }
 
+            .logout-button {
+                margin-right: 20px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: var(--color-text);
+                font-weight: 500;
+                transition: color 0.2s ease;
+
+                display: flex;
+                align-items: center;
+                gap: 5px;
+
+                &:hover {
+                    color: #ff6b6b;
+                    /* qırmızı vurğu çıxış üçün */
+                }
+            }
+
             .dark-toggle {
                 background: none;
                 border: none;
@@ -53,6 +83,8 @@
                 color: var(--color-text);
                 display: flex;
                 align-items: center;
+                font-size: 18px;
+                transition: color 0.2s ease;
 
                 &:hover {
                     color: var(--color-primary-hover);
@@ -60,32 +92,105 @@
             }
         }
 
+        /* MOBILE NAVIGATION */
         .mobile-nav {
             display: flex;
             flex-direction: column;
             gap: 15px;
+            padding-top: 10px;
 
             .nav-link {
                 color: var(--color-text);
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                text-decoration: none;
+                font-size: 16px;
+                transition: color 0.2s ease;
+
+                &.active {
+                    color: var(--color-text-active);
+                    font-weight: bold;
+                }
 
                 &:hover {
                     color: var(--color-primary-hover);
                 }
             }
 
+            /* MOBILE DARK MODE BUTTON */
             .dark-toggle {
-                margin-top: 15px;
-                background: none;
-                border: none;
+                margin-top: 20px;
+                background: var(--color-card-bg);
+                border: 1px solid var(--color-border);
+                border-radius: 8px;
+                padding: 10px 12px;
                 cursor: pointer;
                 color: var(--color-text);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 16px;
+                transition: all 0.25s ease;
 
                 &:hover {
-                    color: var(--color-primary-hover);
+                    background: var(--color-header-bg-hover);
+                    color: var(--color-text-active);
+                    transform: translateY(-1px);
                 }
+            }
+
+            /* MOBILE LOGOUT BUTTON */
+            .logout-button {
+                margin-top: 10px;
+                background: #e74c3c;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 12px;
+                cursor: pointer;
+                color: #fff;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: center;
+                transition: all 0.25s ease;
+
+                &:hover {
+                    background: #c0392b;
+                    transform: translateY(-1px);
+                }
+
+                svg {
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+}
+
+/* RESPONSIVE OPTIMIZATION */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 0 10px;
+        .logo {
+            font-size: 18px;
+
+            img {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        .desktop-nav {
+            display: none;
+        }
+
+        .mobile-nav {
+            gap: 18px;
+            .dark-toggle,
+            .logout-button {
+                font-size: 15px;
             }
         }
     }

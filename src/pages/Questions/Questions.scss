@@ -1,0 +1,31 @@
+.questions-page {
+  padding: 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      color: var(--color-text-dark);
+    }
+
+    button {
+      background: var(--color-primary);
+      border: none;
+
+      &:hover {
+        background: var(--color-primary-hover);
+      }
+    }
+  }
+
+  .empty-card {
+    text-align: center;
+    background: var(--color-card-bg);
+    color: var(--color-text);
+    padding: 30px;
+    border-radius: 10px;
+  }
+}
