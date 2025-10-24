@@ -1,106 +1,205 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, DatePicker, TimePicker, Select, Button } from "antd";
-import moment from "moment";
-import axios from "axios";
-import { toast, Toaster } from "react-hot-toast";
+import React, { useEffect, useState } from "react";
+import {
+    Form,
+    Input,
+    DatePicker,
+    Select,
+    Button,
+    InputNumber,
+    Upload,
+    Spin,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
+import dayjs from "dayjs";
+import {
+    fetchMeetingById,
+    updateMeeting,
+    selectMeetingById,
+    selectMeetingsStatus,
+} from "../../../store/slices/meetingSlice/meetingSlice";
 import "./MeetingEdit.scss";
+
 const { Option } = Select;
-const EventEdit = () => {
-    const { id } = useParams();
+
+const MeetingEdit = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const { id } = useParams();
+
+    const token = useSelector((state) => state.auth.token);
+    const status = useSelector(selectMeetingsStatus);
+    const meeting = useSelector((state) => selectMeetingById(state, Number(id)));
+
+    const [imageFile, setImageFile] = useState(null);
+    const [preview, setPreview] = useState(null);
     const [form] = Form.useForm();
-    // bura yenidən bax !!!
+
+    // 🧠 İlk açıldıqda meeting məlumatlarını çək
     useEffect(() => {
-        const fetchMeeting = async () => {
-            try {
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/meetings/${id}`);
-                const event = res.data;
+        dispatch(fetchMeetingById({ id, token }));
+    }, [id, token, dispatch]);
 
-                form.setFieldsValue({
-                    title: event.title,
-                    eventDate: moment(event.date),
-                    startTime: moment(event.startTime, "HH:mm"),
-                    endTime: moment(event.endTime, "HH:mm"),
-                    status: event.status,
-                });
-            } catch (err) {
-                toast.error("Event yüklənə bilmədi.");
+    useEffect(() => {
+        if (meeting) {
+            const data = meeting.data ? meeting.data : meeting; // bəzi hallarda meeting.data olur
+            form.setFieldsValue({
+                title: data.title,
+                description: data.description,
+                start_time: dayjs(data.start_time, "DD MMMM YYYY HH:mm"),
+                end_time: dayjs(data.end_time, "DD MMMM YYYY HH:mm"),
+                max_user_count: data.max_user_count,
+                status: data.status,
+            });
+            if (data.image) {
+                setPreview(data.image);
             }
-        };
-        fetchMeeting();
-    }, [id, form]);
+        }
+    }, [meeting, form]);
 
-    const handleSubmit = async (values) => {
-        try {
-            setLoading(true);
-            const payload = {
-                title: values.title,
-                date: values.eventDate.format("YYYY-MM-DD"),
-                startTime: values.startTime.format("HH:mm"),
-                endTime: values.endTime.format("HH:mm"),
-                status: values.status,
-            };
-            await axios.put(`${process.env.REACT_APP_API_URL}/meetings/${id}`, payload);
-            toast.success("Tədbir uğurla güncəlləndi!");
-            navigate("/meetings");
-        } catch (err) {
-            console.error(err);
-            toast.error("Xəta baş verdi. Tədbir güncəllənmədi.");
-        } finally {
-            setLoading(false);
+    const handleFileChange = (info) => {
+        const file = info.file.originFileObj || info.file;
+        if (file) {
+            setImageFile(file);
+            setPreview(URL.createObjectURL(file));
         }
     };
 
-    const validateTime = ({ getFieldValue }) => ({
-        validator(_, value) {
-            const startTime = getFieldValue("startTime");
-            if (!value || !startTime) return Promise.resolve();
-            if (value.isAfter(startTime)) return Promise.resolve();
-            return Promise.reject(new Error("Bitmə vaxtı başlanğıc vaxtından sonra olmalıdır"));
-        },
-    });
+    const handleSubmit = async (values) => {
+        const formData = new FormData();
+        formData.append("title", values.title);
+        formData.append("description", values.description);
+        formData.append("start_time", dayjs(values.start_time).format("YYYY-MM-DD HH:mm"));
+        formData.append("end_time", dayjs(values.end_time).format("YYYY-MM-DD HH:mm"));
+        formData.append("status", values.status);
+        formData.append("max_user_count", values.max_user_count);
+        if (imageFile) formData.append("image", imageFile);
+
+        try {
+            dispatch(updateMeeting({ id, formData, token }))
+                .unwrap()
+                .then(() => {
+                    toast.success("Meeting uğurla güncəlləndi!");
+                    navigate("/meetings");
+                })
+                .catch((err) => {
+                    toast.error(err || "Meeting güncəllənərkən xəta baş verdi!");
+                });
+        } catch (err) {
+            toast.error(err || "Meeting güncəllənərkən xəta baş verdi!");
+        }
+    };
+
+    if (status === "loading" && !meeting) {
+        return (
+            <div className="meeting-edit-loading">
+                <Spin size="large" />
+            </div>
+        );
+    }
 
     return (
-        <div className="create-meeting">
+        <div className="meeting-edit-page">
             <Toaster position="top-right" />
             <div className="form-container">
                 <h2>Tədbiri Güncəllə</h2>
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={handleSubmit}
-                >
-                    <Form.Item label="Başlıq" name="title" rules={[{ required: true, message: "Başlıq mütləqdir" }]}>
-                        <Input placeholder="Tədbirin adı" />
+
+                <Form layout="vertical" form={form} onFinish={handleSubmit}>
+                    <Form.Item
+                        label="Başlıq"
+                        name="title"
+                        rules={[{ required: true, message: "Başlıq mütləqdir" }]}
+                    >
+                        <Input placeholder="Tədbir başlığı..." />
                     </Form.Item>
 
-                    <Form.Item label="Tədbirin tarixi" name="eventDate" rules={[{ required: true, message: "Tədbirin tarixi mütləqdir" }]}>
-                        <DatePicker style={{ width: "100%" }} />
+                    <Form.Item
+                        label="Təsvir"
+                        name="description"
+                        rules={[{ required: true, message: "Təsvir mütləqdir" }]}
+                    >
+                        <Input.TextArea rows={3} placeholder="Tədbir haqqında məlumat..." />
                     </Form.Item>
 
                     <div className="two-columns">
-                        <Form.Item label="Başlama vaxtı" name="startTime" rules={[{ required: true, message: "Başlama vaxtı mütləqdir" }]}>
-                            <TimePicker style={{ width: "100%" }} format="HH:mm" />
+                        <Form.Item
+                            label="Başlama vaxtı"
+                            name="start_time"
+                            rules={[{ required: true, message: "Başlama vaxtı mütləqdir" }]}
+                        >
+                            <DatePicker
+                                showTime={{ format: "HH:mm" }}
+                                format="YYYY-MM-DD HH:mm"
+                                style={{ width: "100%" }}
+                            />
                         </Form.Item>
 
-                        <Form.Item label="Bitmə vaxtı" name="endTime" dependencies={["startTime"]} rules={[{ required: true, message: "Bitmə vaxtı mütləqdir" }, validateTime]}>
-                            <TimePicker style={{ width: "100%" }} format="HH:mm" />
+                        <Form.Item
+                            label="Bitmə vaxtı"
+                            name="end_time"
+                            rules={[{ required: true, message: "Bitmə vaxtı mütləqdir" }]}
+                        >
+                            <DatePicker
+                                showTime={{ format: "HH:mm" }}
+                                format="YYYY-MM-DD HH:mm"
+                                style={{ width: "100%" }}
+                            />
                         </Form.Item>
                     </div>
 
-                    <Form.Item label="Status" name="status" rules={[{ required: true, message: "Status seçilməlidir" }]}>
+                    <Form.Item
+                        label="Maksimum istifadəçi sayı"
+                        name="max_user_count"
+                        rules={[{ required: true, message: "Bu sahə mütləqdir" }]}
+                    >
+                        <InputNumber min={1} style={{ width: "100%" }} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Status"
+                        name="status"
+                        rules={[{ required: true, message: "Status seçilməlidir" }]}
+                    >
                         <Select>
-                            <Option value="upcoming">Upcoming</Option>
-                            <Option value="active">Active</Option>
-                            <Option value="finished">Finished</Option>
+                            <Option value={1}>Gözləmədə</Option>
+                            <Option value={2}>Aktiv</Option>
+                            <Option value={3}>Bitib</Option>
                         </Select>
                     </Form.Item>
 
+                    <Form.Item label="Şəkil (istəyə bağlı)">
+                        <Upload
+                            beforeUpload={() => false}
+                            showUploadList={false}
+                            onChange={handleFileChange}
+                            accept="image/*"
+                        >
+                            <Button icon={<UploadOutlined />}>Yeni şəkil seç</Button>
+                        </Upload>
+
+                        {preview && (
+                            <img
+                                src={preview}
+                                alt="preview"
+                                style={{
+                                    marginTop: "10px",
+                                    maxWidth: "250px",
+                                    borderRadius: "8px",
+                                }}
+                            />
+                        )}
+                    </Form.Item>
+
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading}>
-                            {loading ? "Güncəllənir..." : "Tədbiri Güncəllə"}
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={status === "loading"}
+                            style={{ width: "100%" }}
+                        >
+                            {status === "loading" ? "Yenilənir..." : "Tədbiri Güncəllə"}
                         </Button>
                     </Form.Item>
                 </Form>
@@ -109,4 +208,4 @@ const EventEdit = () => {
     );
 };
 
-export default EventEdit;
+export default MeetingEdit;

@@ -61,7 +61,7 @@ const Dashboard = () => {
                 </Col>
             </Row>
 
-            <Card className="events-table" style={{ marginTop: 20 }}>
+            <Card className="meetings-table" style={{ marginTop: 20 }}>
                 <Table
                     columns={columns}
                     dataSource={data}

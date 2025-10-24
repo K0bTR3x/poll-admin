@@ -4,94 +4,105 @@ import {
     createEntityAdapter,
     createSelector,
 } from "@reduxjs/toolkit";
-import * as meetingservice from "../../../services/meetingService";
+import * as meetingService from "../../../services/meetingService";
 
-// 1) Adapter
 const meetingsAdapter = createEntityAdapter({
-    selectId: (e) => e.id,
-    // start_time stringdirsə lexicographic sıralama da iş görür
-    sortComparer: (a, b) => (a.start_time || "").localeCompare(b.start_time || ""),
+    selectId: (meeting) => meeting.id,
+    sortComparer: (a, b) =>
+        (a.start_time || "").localeCompare(b.start_time || ""),
 });
 
-// 2) State
 const initialState = meetingsAdapter.getInitialState({
-    status: "idle",     // idle | loading | succeeded | failed
+    status: "idle",
     error: null,
-    selectedId: null,   // UI üçün seçilmiş event
+    selectedId: null,
 });
 
-// 3) Thunk-lar
 export const fetchMeetings = createAsyncThunk(
     "meetings/fetchAll",
-    async (_, { rejectWithValue }) => {
+    async ({ token } = {}, { rejectWithValue }) => {
         try {
-            const res = await meetingservice.getMeetings();
-            return res.data; // Array
+            const res = await meetingService.getMeetings();
+            return res.data;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Eventləri çəkmək alınmadı");
+            console.error("Meetings fetch error:", err);
+            return rejectWithValue(
+                err.response?.data?.message || "Meeting-ləri yükləmək mümkün olmadı"
+            );
         }
     }
 );
 
 export const fetchMeetingById = createAsyncThunk(
     "meetings/fetchById",
-    async (id, { rejectWithValue }) => {
+    async ({ id, token }, { rejectWithValue }) => {
         try {
-            const res = await meetingservice.getMeetingById(id);
-            return res.data; // Object
+            const res = await meetingService.getMeetingById(id, token);
+            return res.data.data; // ✅ yalnız meeting obyekti
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Event tapılmadı");
+            return rejectWithValue(err.response?.data || "Meeting tapılmadı");
         }
     }
 );
 
 export const createMeeting = createAsyncThunk(
     "meetings/create",
-    async (data, { rejectWithValue }) => {
+    async ({ formData, token }, { rejectWithValue }) => {
         try {
-            const res = await meetingservice.createMeeting(data);
-            return res.data; // created object
+            const res = await meetingService.createMeeting(formData, token);
+            return res.data;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Event yaratmaq mümkün olmadı");
+            console.error("Meeting yaratmaqda xəta:", err);
+            return rejectWithValue(
+                err.response?.data?.message || "Meeting yaratmaq mümkün olmadı"
+            );
         }
     }
 );
 
 export const updateMeeting = createAsyncThunk(
     "meetings/update",
-    async ({ id, data }, { rejectWithValue }) => {
+    async ({ id, formData, token }, { rejectWithValue }) => {
         try {
-            const res = await meetingservice.updateMeeting(id, data);
-            return res.data; // updated object
+            // Laravel PUT emulyasiyası üçün
+            formData.append("_method", "PUT");
+
+            const res = await meetingService.updateMeeting(id, formData, token);
+
+            // Backend-də "data" içində gəlir
+            return res.data.data;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Event yenilənmədi");
+            console.error("❌ Meeting update error:", err.response?.data);
+
+            return rejectWithValue(
+                err.response?.data?.message || "Meeting yenilənmədi"
+            );
         }
     }
 );
+
 
 export const deleteMeeting = createAsyncThunk(
     "meetings/delete",
-    async (id, { rejectWithValue }) => {
+    async ({ id, token }, { rejectWithValue }) => {
         try {
-            await meetingservice.deleteMeeting(id);
-            return id; // remove by id
+            await meetingService.deleteMeeting(id, token);
+            return id;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Event silinmədi");
+            return rejectWithValue(
+                err.response?.data?.message || "Meeting silinmədi"
+            );
         }
     }
 );
-
-// 4) Slice
 const meetingSlice = createSlice({
     name: "meetings",
     initialState,
     reducers: {
-        setSelectedEvent: (state, action) => {
+        setSelectedMeeting: (state, action) => {
             state.selectedId = action.payload;
         },
-        // Socket-dən gələn canlı yeniləmələr üçün hazır action-lar
-        upsertLivemeetings: (state, action) => {
-            // payload: array | object
+        upsertLiveMeetings: (state, action) => {
             Array.isArray(action.payload)
                 ? meetingsAdapter.upsertMany(state, action.payload)
                 : meetingsAdapter.upsertOne(state, action.payload);
@@ -99,7 +110,6 @@ const meetingSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // fetchAll
             .addCase(fetchMeetings.pending, (state) => {
                 state.status = "loading";
                 state.error = null;
@@ -112,36 +122,58 @@ const meetingSlice = createSlice({
                 state.status = "failed";
                 state.error = action.payload;
             })
-            // fetchById
+
             .addCase(fetchMeetingById.fulfilled, (state, action) => {
                 meetingsAdapter.upsertOne(state, action.payload);
             })
-            // create
+
+            .addCase(createMeeting.pending, (state) => {
+                state.status = "loading";
+            })
             .addCase(createMeeting.fulfilled, (state, action) => {
+                state.status = "succeeded";
                 meetingsAdapter.addOne(state, action.payload);
             })
-            // update
+            .addCase(createMeeting.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload;
+            })
+
+            .addCase(updateMeeting.pending, (state) => {
+                state.status = "loading";
+            })
             .addCase(updateMeeting.fulfilled, (state, action) => {
+                state.status = "succeeded";
                 meetingsAdapter.upsertOne(state, action.payload);
             })
-            // delete
+            .addCase(updateMeeting.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload;
+            })
+
             .addCase(deleteMeeting.fulfilled, (state, action) => {
                 meetingsAdapter.removeOne(state, action.payload);
             });
     },
 });
 
-export const { setSelectedEvent, upsertLivemeetings } = meetingSlice.actions;
+export const { setSelectedMeeting, upsertLiveMeetings } = meetingSlice.actions;
 export default meetingSlice.reducer;
-
-// 5) Selector-lar
 const baseSelector = (state) => state.meetings;
 export const {
     selectAll: selectAllMeetings,
     selectById: selectMeetingById,
     selectIds: selectMeetingIds,
 } = meetingsAdapter.getSelectors(baseSelector);
-
-export const selectMeetingsStatus = createSelector(baseSelector, (s) => s.status);
-export const selectMeetingsError = createSelector(baseSelector, (s) => s.error);
-export const selectSelectedMeetingId = createSelector(baseSelector, (s) => s.selectedId);
+export const selectMeetingsStatus = createSelector(
+    baseSelector,
+    (state) => state.status
+);
+export const selectMeetingsError = createSelector(
+    baseSelector,
+    (state) => state.error
+);
+export const selectSelectedMeetingId = createSelector(
+    baseSelector,
+    (state) => state.selectedId
+);

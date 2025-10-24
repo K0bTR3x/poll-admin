@@ -1,4 +1,4 @@
-// src/services/eventService.js
+// src/services/MeetingService.js
 import api from "./api";
 
 export const getQuestions = () => api.get("/questions");

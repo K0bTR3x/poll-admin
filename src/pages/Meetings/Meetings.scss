@@ -1,31 +1,48 @@
-.events-page {
+.meetings-page {
     padding: 20px;
     background: var(--color-background);
     min-height: 100vh;
     color: var(--color-text-dark);
 
-    .events-header {
-        margin-bottom: 16px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
+    .meetings-header {
+        padding: 10px;
+        margin-bottom: 10px;
+
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; // 🔹 kiçik ekranlarda sıralanma pozulmasın
+        }
+
+        span {
+            margin-bottom: 0px;
+            font-size: 16px;
+            font-weight: 500;
+        }
 
         .ant-select-selector {
             background: var(--color-card-bg);
             color: var(--color-text-dark);
             border-radius: 6px !important;
             border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+
+            &:hover {
+                border-color: var(--color-primary);
+            }
         }
 
         button {
             border-radius: 6px;
             background: var(--color-primary);
             border: none;
+            font-weight: 500;
+            transition: all 0.25s ease;
 
             &:hover {
                 background: var(--color-primary-hover);
+                transform: translateY(-1px);
             }
         }
     }
@@ -34,11 +51,15 @@
         background: var(--color-card-bg);
         border-radius: 10px;
         color: var(--color-text-dark);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow-x: auto; // 🔹 mobil scroll
     }
 
     .ant-table-thead>tr>th {
         background: var(--color-header-bg);
         color: var(--color-text);
+        font-weight: 600;
+        white-space: nowrap;
     }
 
     .ant-table-tbody>tr:hover>td {
@@ -50,6 +71,67 @@
 
         a {
             color: var(--color-primary);
+        }
+    }
+}
+
+/* 🔹 Tablet və mobil üçün uyğunlaşma */
+@media only screen and (max-width: 992px) {
+    .meetings-page {
+        .meetings-header {
+            div {
+                flex-direction: column;
+                align-items: flex-start;
+
+                span {
+                    font-size: 15px;
+                }
+
+                .ant-space,
+                .ant-select,
+                button {
+                    width: 100%;
+                    margin-top: 8px;
+                }
+            }
+        }
+
+        .ant-table {
+            font-size: 13px;
+        }
+    }
+}
+
+/* 🔹 Kiçik mobil (510px və aşağı) üçün */
+@media only screen and (max-width: 510px) {
+    .meetings-page {
+        padding: 12px;
+        .meetings-header {
+            div {
+                span {
+                    font-size: 14px;
+                }
+
+                .ant-select,
+                button {
+                    width: 100%;
+                }
+            }
+        }
+
+        .ant-table {
+            font-size: 12px;
+
+            th,
+            td {
+                padding: 10px 6px;
+            }
+        }
+
+        .ant-pagination {
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
         }
     }
 }

@@ -1,97 +1,40 @@
-/* EventCreate.scss */
-.create-event {
+.meeting-create-page {
     padding: 20px;
+    background: var(--color-background);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
 
     .form-container {
         width: 100%;
         background: var(--color-card-bg);
-        padding: 30px;
-        border-radius: 8px;
+        padding: 24px;
+        border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
 
         h2 {
+            text-align: center;
             margin-bottom: 20px;
             color: var(--color-text);
-            text-align: center;
         }
 
-        .ant-form {
-            .ant-form-item {
-                margin-bottom: 16px;
-                label {
-                    color: var(--color-text);
-                    font-weight: 500;
-                }
-
-                .ant-picker,
-                .ant-input,
-                .ant-select-selector,
-                .ant-time-picker {
-                    background: var(--color-background);
-                    color: var(--color-text-dark);
-                    transition: all 0.3s;
-                }
-
-                .ant-picker-focused,
-                .ant-input-focused {
-                    border-color: var(--color-primary);
-                    box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
-                }
-
-                .ant-picker:hover,
-                .ant-input:hover,
-                .ant-select-selector:hover {
-                    border-color: var(--color-primary-hover);
-                }
-
-                .ant-select-selector .ant-select-selection-item {
-                    color: var(--color-text-dark);
-                }
-            }
-        }
-
-        /* 2 sütunlu layout */
         .two-columns {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            display: flex;
+            gap: 12px;
 
             @media (max-width: 600px) {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
         }
 
-        .submit-btn {
-            width: 100%;
-            margin-top: 10px;
-        }
-    }
+        button {
+            border-radius: 6px;
+            font-weight: 500;
+            background: var(--color-primary);
 
-    /* Dark mode */
-    body.dark & {
-        .form-container {
-            background: var(--color-card-bg);
-            color: var(--color-text);
-
-            .ant-input,
-            .ant-picker,
-            .ant-time-picker,
-            .ant-select-selector {
-                background: var(--color-card-bg);
-                color: var(--color-text);
-            }
-
-            .ant-form-item label {
-                color: var(--color-text);
-            }
-
-            .ant-picker-focused,
-            .ant-input-focused {
-                border-color: var(--color-primary);
-                box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.2);
+            &:hover {
+                background: var(--color-primary-hover);
             }
         }
     }
