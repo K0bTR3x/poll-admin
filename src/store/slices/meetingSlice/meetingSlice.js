@@ -66,11 +66,10 @@ export const updateMeeting = createAsyncThunk(
         try {
             // Laravel PUT emulyasiyası üçün
             formData.append("_method", "PUT");
-
             const res = await meetingService.updateMeeting(id, formData, token);
-
             // Backend-də "data" içində gəlir
-            return res.data.data;
+            console.log(res.data)
+            return res.data;
         } catch (err) {
             console.error("❌ Meeting update error:", err.response?.data);
 

@@ -21,7 +21,7 @@ const App = () => {
           <Route path="meetings/create" element={<MeetingCreate />} />
           <Route path="meetings/edit/:id" element={<MeetingEdit />} />
           <Route path="meetings/:id" element={<MeetingDetail />} />
-          <Route path="meetings/:meetingId/questions" element={<Questions />} />
+          <Route path="meetings/:id/questions" element={<Questions />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

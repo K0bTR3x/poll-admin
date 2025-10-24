@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import dayjs from "dayjs";
+
 import {
     fetchMeetingById,
     updateMeeting,
@@ -28,23 +29,19 @@ const MeetingEdit = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
-
     const token = useSelector((state) => state.auth.token);
     const status = useSelector(selectMeetingsStatus);
     const meeting = useSelector((state) => selectMeetingById(state, Number(id)));
-
     const [imageFile, setImageFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [form] = Form.useForm();
-
-    // 🧠 İlk açıldıqda meeting məlumatlarını çək
     useEffect(() => {
         dispatch(fetchMeetingById({ id, token }));
     }, [id, token, dispatch]);
 
     useEffect(() => {
         if (meeting) {
-            const data = meeting.data ? meeting.data : meeting; // bəzi hallarda meeting.data olur
+            const data = meeting.data ? meeting.data : meeting;
             form.setFieldsValue({
                 title: data.title,
                 description: data.description,
@@ -105,7 +102,6 @@ const MeetingEdit = () => {
             <Toaster position="top-right" />
             <div className="form-container">
                 <h2>Tədbiri Güncəllə</h2>
-
                 <Form layout="vertical" form={form} onFinish={handleSubmit}>
                     <Form.Item
                         label="Başlıq"

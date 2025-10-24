@@ -1,8 +1,18 @@
-// src/services/MeetingService.js
 import api from "./api";
 
-export const getQuestions = () => api.get("/questions");
-export const getQuestionById = (id) => api.get(`/questions/${id}`);
+export const getQuestionsByMeeting = async (meetingId) => {
+    const res = await api.get(`/questions/${meetingId}`);
+    const raw = res.data.data;
+    const data = Array.isArray(raw) ? raw : [raw];
+    return { data };
+};
+
+
+// 🔹 Yeni sual yarat
 export const createQuestion = (data) => api.post("/questions", data);
-export const updateQuestion = (id, data) => api.put(`/questions/${id}`, data);
+
+// 🔹 Sual sil
 export const deleteQuestion = (id) => api.delete(`/questions/${id}`);
+
+// 🔹 Sual redaktə (hazırda istifadə edilmir, amma əlavə et)
+export const updateQuestion = (id, data) => api.put(`/questions/${id}`, data);
