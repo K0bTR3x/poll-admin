@@ -5,14 +5,14 @@
         .ant-card {
             transition: all 0.3s;
             background: var(--color-card-bg);
-            color: var(--color-text);
+            color: var(--color-text-dark);
 
             .ant-statistic-title {
-                color: var(--color-text);
+                color: var(--color-text-dark);
             }
 
             .ant-statistic-content {
-                color: var(--color-text);
+                color: var(--color-text-dark);
             }
         }
     }
@@ -23,7 +23,7 @@
 
             .ant-table-thead>tr>th {
                 background: var(--color-card-bg);
-                color: var(--color-text);
+                color: var(--color-text-dark);
             }
 
             .ant-table-tbody>tr>td {

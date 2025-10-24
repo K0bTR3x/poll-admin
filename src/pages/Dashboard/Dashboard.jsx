@@ -4,14 +4,11 @@ import { Row, Col, Card, Statistic, Table } from "antd";
 import { FiUsers, FiCalendar, FiActivity } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import "./Dashboard.scss";
-
 const Dashboard = () => {
     const { darkMode } = useSelector((state) => state.theme);
-
-    // Sample table data
     const columns = [
         {
-            title: 'Event Name',
+            title: 'Meeting Name',
             dataIndex: 'name',
             key: 'name',
         },
@@ -26,7 +23,6 @@ const Dashboard = () => {
             key: 'participants',
         },
     ];
-
     const data = [
         { key: 1, name: "Annual Meetup", date: "2025-10-20", participants: 50 },
         { key: 2, name: "Workshop React", date: "2025-10-25", participants: 30 },
@@ -48,7 +44,7 @@ const Dashboard = () => {
                 <Col xs={24} sm={12} md={8}>
                     <Card>
                         <Statistic
-                            title="Events"
+                            title="Meetings"
                             value={12}
                             prefix={<FiCalendar />}
                         />

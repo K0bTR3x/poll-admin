@@ -5,7 +5,6 @@ import "./Footer.scss";
 
 const FooterBar = () => {
     const { darkMode, themeColor } = useSelector((state) => state.theme);
-
     return (
         <footer
             className={`app-footer ${darkMode ? "dark" : "light"}`}

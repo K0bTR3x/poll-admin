@@ -46,7 +46,6 @@ const Login = () => {
                     <div className="login-card">
                         <h2>Xoş Gəlmisiniz!</h2>
                         <p>Şəxsi məlumatlarınızı daxil edin</p>
-
                         <Formik
                             initialValues={{ email: "", password: "" }}
                             validationSchema={validationSchema}

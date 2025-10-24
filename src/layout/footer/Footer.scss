@@ -5,15 +5,11 @@
     transition: all 0.3s;
     background: var(--color-footer-bg);
     color: var(--color-text);
-
     p {
         margin: 0;
     }
-
     &.light {
         background: var(--color-footer-bg);
-
-        /* Light mode rəngləri artıq style-dan gəlir, burda hover istifadə edilə bilər */
         a {
             color: #fff;
 
@@ -24,8 +20,6 @@
     }
 
     &.dark {
-
-        /* Dark mode rəngləri style-dan gəlir */
         a {
             color: var(--color-text);
 

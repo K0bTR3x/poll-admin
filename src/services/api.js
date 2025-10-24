@@ -18,15 +18,11 @@ api.interceptors.request.use(
     },
     (error) => Promise.reject(error)
 );
-
-// ✅ Response interceptor
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            // Token etibarsızdır
             localStorage.removeItem("token");
-            // Redux-a girmədən, sadəcə redirect
             window.location.href = "/";
         }
         return Promise.reject(error);

@@ -8,22 +8,16 @@ import App from "./App";
 import "./assets/styles/theme.scss";
 import store from "./store/store";
 import "./index.css";
-
 // ThemeVariables komponenti: body class və CSS dəyişənləri üçün
 const ThemeVariables = () => {
     const { darkMode, themeColor } = useSelector((state) => state.theme);
-
     useEffect(() => {
         const root = document.documentElement;
-
-        // Dark mode class
         if (darkMode) {
             document.body.classList.add("dark");
         } else {
             document.body.classList.remove("dark");
         }
-
-        // CSS dəyişənləri
         root.style.setProperty("--color-primary", themeColor || "#1677ff");
         root.style.setProperty("--bg-main", darkMode ? "#121212" : "#f5f5f5");
         root.style.setProperty("--bg-header", darkMode ? "#1a1a2a" : themeColor || "#1677ff");
@@ -35,11 +29,8 @@ const ThemeVariables = () => {
 
     return null;
 };
-
-// Root komponenti: ConfigProvider ilə AntD rənglərini təmin edir
 const Root = () => {
     const { darkMode, themeColor } = useSelector((state) => state.theme);
-
     return (
         <>
             <ThemeVariables />

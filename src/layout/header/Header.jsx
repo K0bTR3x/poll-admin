@@ -25,10 +25,8 @@ const HeaderBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { darkMode } = useSelector((state) => state.theme);
-
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
         window.addEventListener("resize", handleResize);
@@ -61,24 +59,19 @@ const HeaderBar = () => {
             }
         });
     };
-
     const links = [
         { key: "/dashboard", label: "İdarəetmə Paneli", icon: <FiHome /> },
-        { key: "/events", label: "Tədbirlər", icon: <FiCalendar /> },
+        { key: "/meetings", label: "Tədbirlər", icon: <FiCalendar /> },
         { key: "/profile", label: "Profil", icon: <FiUser /> },
         { key: "/settings", label: "Tənzimləmələr", icon: <IoIosSettings /> },
     ];
-
     return (
         <Header className="app-header">
             <div className="header-inner">
-                {/* Logo */}
                 <Link to="/dashboard" className="logo">
                     <img width="40" src={logo} alt="Logo" />
                     İdarəetmə Paneli
                 </Link>
-
-                {/* Desktop Navigation */}
                 {!isMobile && (
                     <nav className="desktop-nav">
                         {links.map((link) => (
@@ -91,7 +84,6 @@ const HeaderBar = () => {
                                 {link.icon} {link.label}
                             </Link>
                         ))}
-
                         <button className="logout-button" onClick={handleLogout}>
                             <CiLogout /> Çıxış
                         </button>
@@ -105,8 +97,6 @@ const HeaderBar = () => {
                         </button>
                     </nav>
                 )}
-
-                {/* Mobile Navigation (Drawer) */}
                 {isMobile && (
                     <>
                         <Button
@@ -114,7 +104,7 @@ const HeaderBar = () => {
                             icon={<FiMenu size={24} />}
                             onClick={() => setDrawerOpen(true)}
                             style={{
-                                color: "var(--color-text)",
+                                color: "var(--color-text-dark)",
                             }}
                         />
                         <Drawer
@@ -124,7 +114,7 @@ const HeaderBar = () => {
                             open={drawerOpen}
                             bodyStyle={{
                                 background: "var(--color-header-bg)",
-                                color: "var(--color-text)",
+                                color: "var(--color-text-dark)",
                             }}
                         >
                             <nav className="mobile-nav">
@@ -139,7 +129,6 @@ const HeaderBar = () => {
                                         {link.icon} {link.label}
                                     </Link>
                                 ))}
-
                                 <button
                                     className="dark-toggle"
                                     onClick={() => {
@@ -149,7 +138,6 @@ const HeaderBar = () => {
                                 >
                                     {darkMode ? <FiSun /> : <FiMoon />}
                                 </button>
-
                                 <button className="logout-button" onClick={handleLogout}>
                                     <CiLogout /> Çıxış
                                 </button>

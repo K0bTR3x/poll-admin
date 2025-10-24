@@ -1,9 +1,9 @@
-.event-detail {
+.meeting-detail {
     padding: 30px;
     display: flex;
     justify-content: center;
     color: var(--color-text);
-    .event-card {
+    .meeting-card {
         width: 100%;
         background: var(--color-card-bg);
         border-radius: 12px;
@@ -98,7 +98,7 @@
     }
 
     body.dark & {
-        .event-card {
+        .meeting-card {
             background: #22263b;
 
             .ant-table-cell {

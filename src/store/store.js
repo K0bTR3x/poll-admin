@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "./slices/themeSlice/themeSlice";
 import authReducer from "./slices/authSlice/AuthSlice";
-import eventReducer from "./slices/eventSlice/eventSlice";
+import meetingReducer from "./slices/meetingSlice/meetingSlice";
 
 // API xətalarını və ya token müddəti bitəndə avtomatik çıxışı idarə edən middleware
 const apiErrorMiddleware = (store) => (next) => (action) => {
@@ -20,7 +20,7 @@ const store = configureStore({
     reducer: {
         theme: themeReducer,
         auth: authReducer,
-        events: eventReducer, // yeni slice əlavə etdik
+        meetings: meetingReducer, // yeni slice əlavə etdik
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

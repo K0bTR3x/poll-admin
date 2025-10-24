@@ -13,11 +13,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import toast, { Toaster } from "react-hot-toast";
 import api from "../../services/api";
-import "./Events.scss";
-
+import "./Meetings.scss";
 const { Option } = Select;
-
-const Events = () => {
+const Meetings = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [meta, setMeta] = useState(null);
@@ -33,7 +31,7 @@ const Events = () => {
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
   const navigate = useNavigate();
-
+  // bura yenidən bax !!!
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -61,7 +59,6 @@ const Events = () => {
   useEffect(() => {
     fetchEvents();
   }, [currentPage, perPage, sortableFields]);
-
   // ✅ Tədbir silmək
   const handleDelete = async (id) => {
     const event = events.find((e) => e.id === id);
@@ -227,33 +224,30 @@ const Events = () => {
           <Button
             type="default"
             icon={<FiEye />}
-            onClick={() => navigate(`/events/${record.id}`)}
+            onClick={() => navigate(`/meetings/${record.id}`)}
           />
           <Button
             type="primary"
             icon={<FiEdit />}
-            onClick={() => navigate(`/events/edit/${record.id}`)}
+            onClick={() => navigate(`/meetings/edit/${record.id}`)}
           />
           <Button
             danger
             icon={<FiTrash2 />}
             onClick={() => handleDelete(record.id)}
           />
-          {/* 🔹 Yeni: Suallara keçid düyməsi */}
           <Button
             type="default"
             icon={<BsQuestionSquare />}
-            onClick={() => navigate(`/events/${record.id}/questions`)}
+            onClick={() => navigate(`/meetings/${record.id}/questions`)}
           />
         </Space>
       ),
     },
   ];
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
   return (
     <div className="events-page">
       <Toaster position="top-right" />
@@ -262,7 +256,6 @@ const Events = () => {
           <Col>
             <span className="breadcrumb">İdarəetmə Paneli / Tədbirlər</span>
           </Col>
-
           <Col>
             <Space>
               <Select
@@ -277,7 +270,7 @@ const Events = () => {
                 ))}
               </Select>
 
-              <Link to="/events/create">
+              <Link to="/meetings/create">
                 <Button type="primary" icon={<FiPlus />}>
                   Yeni Tədbir
                 </Button>
@@ -286,7 +279,6 @@ const Events = () => {
           </Col>
         </Row>
       </div>
-
       <Table
         columns={columns}
         dataSource={events}
@@ -306,4 +298,4 @@ const Events = () => {
   );
 };
 
-export default Events;
+export default Meetings;

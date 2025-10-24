@@ -4,20 +4,18 @@ import moment from "moment";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
-import "./EventEdit.scss";
-
+import "./MeetingEdit.scss";
 const { Option } = Select;
-
 const EventEdit = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
-
+    // bura yenidən bax !!!
     useEffect(() => {
-        const fetchEvent = async () => {
+        const fetchMeeting = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/events/${id}`);
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/meetings/${id}`);
                 const event = res.data;
 
                 form.setFieldsValue({
@@ -31,7 +29,7 @@ const EventEdit = () => {
                 toast.error("Event yüklənə bilmədi.");
             }
         };
-        fetchEvent();
+        fetchMeeting();
     }, [id, form]);
 
     const handleSubmit = async (values) => {
@@ -44,10 +42,9 @@ const EventEdit = () => {
                 endTime: values.endTime.format("HH:mm"),
                 status: values.status,
             };
-
-            await axios.put(`${process.env.REACT_APP_API_URL}/events/${id}`, payload);
+            await axios.put(`${process.env.REACT_APP_API_URL}/meetings/${id}`, payload);
             toast.success("Tədbir uğurla güncəlləndi!");
-            navigate("/events");
+            navigate("/meetings");
         } catch (err) {
             console.error(err);
             toast.error("Xəta baş verdi. Tədbir güncəllənmədi.");
@@ -66,7 +63,7 @@ const EventEdit = () => {
     });
 
     return (
-        <div className="create-event">
+        <div className="create-meeting">
             <Toaster position="top-right" />
             <div className="form-container">
                 <h2>Tədbiri Güncəllə</h2>

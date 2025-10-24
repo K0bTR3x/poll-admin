@@ -3,11 +3,11 @@ import { Form, Input, DatePicker, TimePicker, Select, Button, InputNumber } from
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
-import "./EventCreate.scss";
+import "./MeetingCreate.scss";
 
 const { Option } = Select;
 
-const EventCreate = () => {
+const MeetingCreate = () => {
   const token = useSelector((state) => state.auth.token); // Redux token
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
@@ -154,4 +154,4 @@ const EventCreate = () => {
   );
 };
 
-export default EventCreate;
+export default MeetingCreate;
